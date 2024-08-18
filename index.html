@@ -1,14 +1,94 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deformable Grid</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Interactive Hexagonal Grid with Logo</title>
+    <link rel="icon" href="head.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        #grid-canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #logo-container {
+            position: absolute;
+            top: 32vh;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 80%;
+            max-width: 800px;
+        }
+        #logo {
+            width: 80%;
+            height: auto;
+            max-height: 30vh;
+            object-fit: contain;
+        }
+        #tagline {
+            position: absolute;
+            top: 60vh;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Nunito', sans-serif;
+            font-size: 2.8vw;
+            font-weight: 300;
+            color: rgba(0, 46, 87, 0.8);
+            white-space: nowrap;
+            text-align: center;
+            width: auto;
+            padding: 10px 20px;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+        @media (max-width: 1200px) {
+            #tagline {
+                font-size: 4vw;
+            }
+        }
+        @media (max-width: 768px) {
+            #tagline {
+                font-size: 5vw;
+            }
+        }
+        @media (max-width: 480px) {
+            #tagline {
+                font-size: 6vw;
+            }
+        }
+    </style>
 </head>
 <body>
-    <canvas id="grid-canvas"></canvas>
+    <div id="canvas-container">
+        <canvas id="grid-canvas"></canvas>
+        <div id="logo-container">
+            <img id="logo" src="logo.svg" alt="Logo">
+        </div>
+        <p id="tagline">Transforming Business Oversight <br>with<br> AI Managerss</p>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
