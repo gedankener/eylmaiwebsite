@@ -14,15 +14,21 @@ const spacing = 10;
 let points = [];
 
 // Mouse interaction
-let mouse = { x: 0, y: 0 };
+let mouse = { x: 0, y: 0, isOnScreen: false };
+let lastMouseMoveTime = 0;
 
 // Probability of a hexagon being present
 const hexagonProbability = 0.3;
 
 // Glow properties
-const glowColor = '#002E57'; // Orange color from the logo
+const glowColor = '#002E57';
 const glowSize = 10;
-const strokeWidth = .5;
+const strokeWidth = 0.5;
+
+// Force properties
+const maxForce = 15;
+const forceRadius = 100;
+const restorativeForce = 0.1;
 
 function createGrid() {
     points = [];
@@ -56,33 +62,38 @@ function resizeCanvas() {
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw background matching the logo's dark blue
+    // Draw background
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    const currentTime = Date.now();
+    const isMouseMoving = currentTime - lastMouseMoveTime < 100;
+
     // Update points
     points.forEach(point => {
-        const dx = mouse.x - point.x;
-        const dy = mouse.y - point.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const force = Math.max(0, 100 - distance) * 0.1;
-        
-        if (distance > 0) {
-            point.vx += (dx / distance) * force;
-            point.vy += (dy / distance) * force;
+        if (mouse.isOnScreen && isMouseMoving) {
+            const dx = mouse.x - point.x;
+            const dy = mouse.y - point.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < forceRadius) {
+                const force = (1 - distance / forceRadius) * maxForce;
+                point.vx -= (dx / distance) * force;
+                point.vy -= (dy / distance) * force;
+            }
         }
         
-        point.vx *= 0.9;
-        point.vy *= 0.9;
+        // Apply restorative force
+        point.vx += (point.baseX - point.x) * restorativeForce;
+        point.vy += (point.baseY - point.y) * restorativeForce;
         
+        // Apply velocity
         point.x += point.vx;
         point.y += point.vy;
         
-        const springForceX = (point.baseX - point.x) * 0.1;
-        const springForceY = (point.baseY - point.y) * 0.1;
-        
-        point.vx += springForceX;
-        point.vy += springForceY;
+        // Damping
+        point.vx *= 0.9;
+        point.vy *= 0.9;
     });
     
     // Draw glowing hexagonal grid
@@ -133,6 +144,14 @@ window.addEventListener('resize', resizeCanvas);
 canvas.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
+    mouse.isOnScreen = true;
+    lastMouseMoveTime = Date.now();
+});
+canvas.addEventListener('mouseenter', () => {
+    mouse.isOnScreen = true;
+});
+canvas.addEventListener('mouseleave', () => {
+    mouse.isOnScreen = false;
 });
 
 // Initialization
